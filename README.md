@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# 🧭 Pathfinding Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A interactive web-based pathfinding visualizer that demonstrates how algorithms like Dijkstra’s Algorithm, A* Search, and Breadth-First Search (BFS) explore a grid to find the shortest path between two points.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Features
 
-## React Compiler
+- 🎯 Visualize pathfinding algorithms step-by-step
+- 🧱 Interactive grid (add/remove walls)
+- 🟢 Set start and end nodes
+- ⚡ Multiple algorithms support:
+  - Dijkstra’s Algorithm
+  - A* Search
+  - Breadth-First Search (BFS)
+- 🧹 Clear grid / reset board
+- 🎨 Real-time animations for visited nodes and shortest path
+- 📱 Responsive UI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🧠 Algorithms Explained
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Dijkstra’s Algorithm
+Guarantees the shortest path by exploring all nodes in order of distance from the start node.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### A* Search
+Uses heuristics (Manhattan distance) to prioritize faster paths and improve performance.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Breadth-First Search (BFS)
+Explores all nodes level by level and guarantees shortest path in unweighted grids.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🛠️ Tech Stack
+
+- React
+- TypeScript
+- CSS / Tailwind
+- JavaScript algorithms
+
+---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/aayush64x/pathfinding-visualizer.git
+cd pathfinding-visualizer
+npm install
+npm start
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🧩 How It Works
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Grid is a 2D array of nodes
+- Each node has:
+  - position (row, col)
+  - type (start, end, wall, empty)
+  - visited state / distance
+- Algorithms update node states step-by-step
+- UI animates visited nodes + shortest path
+
+---
+
+## 💡 Future Improvements
+
+- Weighted nodes
+- Diagonal movement
+- Maze generation
+- Speed control slider
+- Mobile support
+
+---
+
+## 🧑‍💻 Author
+
+Aayush Nakarmi
+Computer Science Student | Aspiring Software Engineer
