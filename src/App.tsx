@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState, useEffect} from "react";
 import { CreateGrid, HasNode, PlaceNode, RemoveNode } from "./Utils/Helper";
 import type { Algorithm} from "./Types/Cell";
 import Grid from "./Components/Grid";
@@ -8,7 +8,7 @@ function App(){
   const [grid, setGrid] = useState(CreateGrid);
   const [algorithm, setAlgorithm] = useState<Algorithm>('BFS');
   const [isRunning, setIsRunning] = useState(false);
-  
+  const isMouseDown = useRef(false); 
 
   const handleVisualize = () => {
     console.log('visualize clicked - algorithm coming soon');
@@ -28,7 +28,7 @@ function App(){
     );
   }
 
-  const handleCellClick = ((row : number, col:number) => {
+  const handleCellClick = ((row : number, col : number) => {
     const node = grid[row][col];
     console.log('clicked', row, col)
 
@@ -48,6 +48,25 @@ function App(){
     }
   });
 
+  const handleMouseDown = (row : number, col : number) => {
+    isMouseDown.current = true; 
+    if(grid[row][col].type === "EMPTY"){
+      setGrid(PlaceNode(grid, row, col, "WALL"));
+    }
+    if(grid[row][col].type === "WALL"){
+      setGrid(RemoveNode(grid, row, col));
+    }
+  }; 
+
+  const handleMouseEnter = (row: number, col: number) => {
+    if(!isMouseDown.current) return ; 
+    if (grid[row][col].type === "EMPTY"){
+      setGrid(PlaceNode(grid, row, col, "WALL"));
+    }
+  }
+
+
+  const handleMouseUp = () => {}; 
   return(
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Navbar
@@ -59,7 +78,7 @@ function App(){
         onClearWalls={handleClearWalls}
       />
       <div className="flex flex-col items-center p-6">
-        <Grid grid={grid} onCellClick={handleCellClick} />
+        <Grid grid={grid} onCellClick={handleCellClick} onCellDrag={handleMouseDown} />
       </div>
     </div>
   );  
