@@ -49,11 +49,20 @@ function App(){
   });
 
   const handleMouseDown = (row : number, col : number) => {
-    isMouseDown.current = true; 
+    isMouseDown.current = true;
+    const node = grid[row][col];
     if(grid[row][col].type === "EMPTY"){
-      setGrid(PlaceNode(grid, row, col, "WALL"));
+      if(!HasNode(grid, "START")){
+        setGrid(PlaceNode(grid, row, col, "START")); 
+      }
+      else if(!HasNode(grid, "END")){
+        setGrid(PlaceNode(grid, row, col, "END")); 
+      }
+      else{
+        setGrid(PlaceNode(grid, row, col, "WALL"));
+      }
     }
-    if(grid[row][col].type === "WALL"){
+    if (node.type === "START" || node.type === "WALL" || node.type === "END"){
       setGrid(RemoveNode(grid, row, col));
     }
   }; 
@@ -66,7 +75,15 @@ function App(){
   }
 
 
-  const handleMouseUp = () => {}; 
+  const handleMouseUp = () => {
+    isMouseDown.current = false; 
+  }; 
+
+  useEffect(() => {
+    window.addEventListener('mouseup', handleMouseUp)
+    return () => window.removeEventListener('mouseup', handleMouseUp)
+  }, [])
+
   return(
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Navbar
@@ -78,7 +95,7 @@ function App(){
         onClearWalls={handleClearWalls}
       />
       <div className="flex flex-col items-center p-6">
-        <Grid grid={grid} onCellClick={handleCellClick} onCellDrag={handleMouseDown} />
+        <Grid grid={grid} onCellClick={handleCellClick} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseEnter={handleMouseEnter}/>
       </div>
     </div>
   );  

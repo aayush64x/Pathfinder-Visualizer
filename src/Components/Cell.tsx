@@ -11,15 +11,14 @@ export const ColorMap: Record<NodeType, string> = {
 
 type Props = {
   type: NodeType,
-  onCellClick: () => void;
+  onMouseDown: () => void, 
+  onMouseEnter: () => void
 };
 
-function Cell({ type, onCellClick }: Props, ) {
+function Cell({ type, onMouseDown, onMouseEnter}: Props, ) {
   return (
     // Clean, single border where the border color perfectly matches the background opacity
-    <div className={`w-10 h-10 rounded border border-gray-500/40 ${ColorMap[type]}`} onClick={() =>{
-      console.log('cell clicked directly'); 
-      onCellClick()}} />
+    <div className={`w-10 h-10 rounded border border-gray-500/40 ${ColorMap[type]}`} onMouseDown={() => onMouseDown()} onMouseEnter={() => onMouseEnter()} />
   );
 }
 
