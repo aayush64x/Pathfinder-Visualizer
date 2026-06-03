@@ -1,8 +1,10 @@
 import { useRef, useState, useEffect } from "react";
-import { CreateGrid, HasNode, PlaceNode, RemoveNode } from "./Utils/Helper";
-import type { Algorithm } from "./Types/Cell";
+import { CreateGrid, findNode, HasNode, PlaceNode, RemoveNode } from "./Utils/Helper";
+import type { Algorithm, Node } from "./Types/Cell";
+import { bfs } from "./Algortithm/BFS";
 import Grid from "./Components/Grid";
 import Navbar from "./Components/Navbar";
+import { animate } from "./Utils/Animator";
 
 function App() {
   const [grid, setGrid] = useState(CreateGrid);
@@ -17,19 +19,25 @@ function App() {
   }, []);
 
   const handleMouseDown = (row: number, col: number) => {
-    isMouseDown.current = true;
-    const node = grid[row][col];
-    if (node.type === "START" || node.type === "END" || node.type === "WALL") {
-      setGrid(RemoveNode(grid, row, col));
-      return;
-    }
-    if (node.type === "EMPTY") {
-      if (!HasNode(grid, "START")) {
-        setGrid(PlaceNode(grid, row, col, "START"));
-      } else if (!HasNode(grid, "END")) {
-        setGrid(PlaceNode(grid, row, col, "END"));
-      } else {
-        setGrid(PlaceNode(grid, row, col, "WALL"));
+    if (isRunning === false) {
+      isMouseDown.current = true;
+      const node = grid[row][col];
+      if (
+        node.type === "START" ||
+        node.type === "END" ||
+        node.type === "WALL"
+      ) {
+        setGrid(RemoveNode(grid, row, col));
+        return;
+      }
+      if (node.type === "EMPTY") {
+        if (!HasNode(grid, "START")) {
+          setGrid(PlaceNode(grid, row, col, "START"));
+        } else if (!HasNode(grid, "END")) {
+          setGrid(PlaceNode(grid, row, col, "END"));
+        } else {
+          setGrid(PlaceNode(grid, row, col, "WALL"));
+        }
       }
     }
   };
@@ -40,9 +48,26 @@ function App() {
       setGrid(PlaceNode(grid, row, col, "WALL"));
     }
   };
+  
+  const handleVisualize = async () => {
+    const startNode = findNode(grid, "START");
+    const endNode = findNode(grid, "END");
 
-  const handleVisualize = () => {
-    console.log('algorithm coming soon');
+    if (!startNode || !endNode) {
+      alert("Please place start and end nodes first");
+      return;
+    }
+
+    setIsRunning(true);
+
+    if (algorithm === "BFS") {
+      const [visited, path] = bfs(grid, startNode, endNode);
+      await animate(visited, path, setGrid, 10);
+    } else if (algorithm === "A-STAR") {
+    } else if (algorithm === "DJIKSTRA") {
+    }
+
+    setIsRunning(false);
   };
 
   const handleClearBoard = () => {

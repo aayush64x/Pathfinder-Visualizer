@@ -48,3 +48,14 @@ export function HasNode(grid: Node[][], nodeType : NodeType) : boolean{
   }
   return false; 
 }
+
+export function findNode(grid: Node[][], nodeType:NodeType) : Node{
+  for(const row of grid){
+    for(const node of row){
+      if(node.type === nodeType){
+        return node;
+      }
+    }
+  }
+  return null; 
+}
