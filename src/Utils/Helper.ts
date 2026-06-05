@@ -49,7 +49,7 @@ export function HasNode(grid: Node[][], nodeType : NodeType) : boolean{
   return false; 
 }
 
-export function findNode(grid: Node[][], nodeType:NodeType) : Node{
+export function findNode(grid: Node[][], nodeType:NodeType){
   for(const row of grid){
     for(const node of row){
       if(node.type === nodeType){
@@ -58,4 +58,15 @@ export function findNode(grid: Node[][], nodeType:NodeType) : Node{
     }
   }
   return null; 
+}
+
+export function ClearPath(grid : Node[][]) : Node[][]{
+  return grid.map( row => 
+    row.map(node => {
+      if(node.type === "VISITED" || node.type === "PATH"){
+        return {...node, type:"EMPTY"};
+      }
+      return node;
+    })
+  )
 }

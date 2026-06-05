@@ -30,9 +30,9 @@ function Navbar({ algorithm, isRunning, onAlgorithmChange, onVisualize, onClearB
           disabled={isRunning}
           className="bg-gray-700 text-white text-sm px-3 py-1.5 rounded-lg border border-gray-600 cursor-pointer disabled:opacity-50"
         >
-          <option value="bfs">Breadth First Search</option>
-          <option value="dijkstra">Dijkstra</option>
-          <option value="astar">A* Search</option>
+          <option value="BFS">Breadth First Search</option>
+          <option value="DIJKSTRA">Dijkstra</option>
+          <option value="A-STAR">A* Search</option>
         </select>
       </div>
 

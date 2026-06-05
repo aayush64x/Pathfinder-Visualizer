@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from "react";
-import { CreateGrid, findNode, HasNode, PlaceNode, RemoveNode } from "./Utils/Helper";
-import type { Algorithm, Node } from "./Types/Cell";
+import { CreateGrid, findNode, HasNode, PlaceNode, RemoveNode, ClearPath } from "./Utils/Helper";
+import type { Algorithm } from "./Types/Cell";
 import { bfs } from "./Algortithm/BFS";
+import { djikstra } from "./Algortithm/Djikstra";
 import Grid from "./Components/Grid";
 import Navbar from "./Components/Navbar";
 import { animate } from "./Utils/Animator";
@@ -19,39 +20,37 @@ function App() {
   }, []);
 
   const handleMouseDown = (row: number, col: number) => {
-    if (isRunning === false) {
-      isMouseDown.current = true;
-      const node = grid[row][col];
-      if (
-        node.type === "START" ||
-        node.type === "END" ||
-        node.type === "WALL"
-      ) {
-        setGrid(RemoveNode(grid, row, col));
-        return;
-      }
-      if (node.type === "EMPTY") {
-        if (!HasNode(grid, "START")) {
-          setGrid(PlaceNode(grid, row, col, "START"));
-        } else if (!HasNode(grid, "END")) {
-          setGrid(PlaceNode(grid, row, col, "END"));
-        } else {
-          setGrid(PlaceNode(grid, row, col, "WALL"));
-        }
+    if (isRunning) return;
+    isMouseDown.current = true;
+    const node = grid[row][col];
+    if (node.type === "START" || node.type === "END" || node.type === "WALL") {
+      setGrid(RemoveNode(grid, row, col));
+      return;
+    }
+    if (node.type === "EMPTY") {
+      if (!HasNode(grid, "START")) {
+        setGrid(PlaceNode(grid, row, col, "START"));
+      } else if (!HasNode(grid, "END")) {
+        setGrid(PlaceNode(grid, row, col, "END"));
+      } else {
+        setGrid(PlaceNode(grid, row, col, "WALL"));
       }
     }
   };
 
   const handleMouseEnter = (row: number, col: number) => {
-    if (!isMouseDown.current) return;
+    if (!isMouseDown.current || isRunning) return;
     if (grid[row][col].type === "EMPTY") {
       setGrid(PlaceNode(grid, row, col, "WALL"));
     }
   };
-  
+
   const handleVisualize = async () => {
-    const startNode = findNode(grid, "START");
-    const endNode = findNode(grid, "END");
+    const clearedGrid = ClearPath(grid);
+    setGrid(clearedGrid);
+
+    const startNode = findNode(clearedGrid, "START");
+    const endNode = findNode(clearedGrid, "END");
 
     if (!startNode || !endNode) {
       alert("Please place start and end nodes first");
@@ -61,10 +60,12 @@ function App() {
     setIsRunning(true);
 
     if (algorithm === "BFS") {
-      const [visited, path] = bfs(grid, startNode, endNode);
+      const [visited, path] = bfs(clearedGrid, startNode, endNode);
+      await animate(visited, path, setGrid, 10);
+    } else if (algorithm === "DIJKSTRA") {
+      const [visited, path] = djikstra(clearedGrid, startNode, endNode);
       await animate(visited, path, setGrid, 10);
     } else if (algorithm === "A-STAR") {
-    } else if (algorithm === "DJIKSTRA") {
     }
 
     setIsRunning(false);

@@ -1,4 +1,5 @@
 import type { Node } from '../Types/Cell';
+import { COLUMNS, ROWS } from '../Types/Constants';
 
 
 
@@ -15,7 +16,7 @@ export function getNeighbors(grid: Node[][], startNode : Node): Node[]{
   ]; 
 
   for (const [r,c] of directions){
-    if(grid[r][c].type !== "WALL" && r>=0 && c>=0){
+    if(r>=0 && c>=0 && r < ROWS && c < COLUMNS && grid[r][c].type !== "WALL"){
       arr.push(grid[r][c]); 
     }
   }
@@ -23,19 +24,47 @@ export function getNeighbors(grid: Node[][], startNode : Node): Node[]{
   return arr; 
 }
 
-export function djikstra( grid: Node[][], startNode : Node, endNode : Node) : [Node [], Node[]]{
-  const visited : Node [] = []; 
-  const map = new Map();
-  const distances = new Map <Node, number>;
-  const path : Node [] = findPath(startNode, endNode, map); 
+export function djikstra(grid: Node[][], startNode: Node, endNode: Node): [Node[], Node[]] {
+  const visited: Node[] = [];
+  const parent = new Map();
+  const distances = new Map<Node, number>();
+  const visitedSet = new Set<Node>();
 
   for (const row of grid) {
-  for (const node of row) {
-    distances.set(node, Infinity)
+    for (const node of row) {
+      distances.set(node, Infinity);
+    }
   }
-}
-  
-  return [visited, path]; 
+
+  distances.set(startNode, 0);
+  const queue: Node[] = [];
+  queue.push(startNode);
+
+  while (queue.length > 0) {
+    queue.sort((a, b) => distances.get(a)! - distances.get(b)!);
+    const current = queue.shift();
+    if (!current) break;
+
+    if (visitedSet.has(current)) continue;
+    visitedSet.add(current);
+
+    if (current === endNode) break;
+
+    visited.push(current);
+
+    const neighbors = getNeighbors(grid, current);
+    for (const n of neighbors) {
+      const dis = distances.get(current)! + 1;
+      if (dis < distances.get(n)!) {
+        distances.set(n, dis);
+        parent.set(n, current);
+        queue.push(n);
+      }
+    }
+  }
+
+  const path = findPath(startNode, endNode, parent);
+  return [visited, path];
 }
 
 function findPath( startNode : Node, endNode: Node, map: Map<Node , Node>) : Node[]{
@@ -51,7 +80,3 @@ function findPath( startNode : Node, endNode: Node, map: Map<Node , Node>) : Nod
   return arr.reverse(); 
 }
 
-function calculateDistance(startNode : Node, destinationNode : Node) : number{
-  let distance : number = 0; 
-  return distance; 
-}
