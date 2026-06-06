@@ -6,6 +6,7 @@ import { djikstra } from "./Algortithm/Djikstra";
 import Grid from "./Components/Grid";
 import Navbar from "./Components/Navbar";
 import { animate } from "./Utils/Animator";
+import { astar } from "./Algortithm/AStar";
 
 function App() {
   const [grid, setGrid] = useState(CreateGrid);
@@ -65,7 +66,10 @@ function App() {
     } else if (algorithm === "DIJKSTRA") {
       const [visited, path] = djikstra(clearedGrid, startNode, endNode);
       await animate(visited, path, setGrid, 10);
-    } else if (algorithm === "A-STAR") {
+    }
+    else if (algorithm === "A-STAR") {
+      const [visited, path] = astar(clearedGrid, startNode, endNode);
+      await animate(visited, path, setGrid, 10);
     }
 
     setIsRunning(false);

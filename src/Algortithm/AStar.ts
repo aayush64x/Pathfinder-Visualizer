@@ -1,11 +1,11 @@
 import type { Node } from "../Types/Cell";
 import { ROWS, COLUMNS } from "../Types/Constants";
 
-export function getNeighbors(grid: Node[][], node : Node ) : Node[]{
-  let arr : Node [] = []
-  const row = node.row; 
-  const col = node. column; 
-  
+function getNeighbors(grid: Node[][], node: Node): Node[] {
+  const arr: Node[] = [];
+  const row = node.row;
+  const col = node.column;
+
   const directions = [
     [row - 1, col],
     [row + 1, col],
@@ -20,58 +20,71 @@ export function getNeighbors(grid: Node[][], node : Node ) : Node[]{
       }
     }
   }
-  
-  return arr; 
+
+  return arr;
 }
 
-export function astar(grid: Node[][], startNode : Node, endNode : Node) : [Node[], Node[]]{
-  const visited : Node [] = []
-  let path : Node [] = []
-  const parent = new Map(); 
-  
-  const queue : Node[] = []
-  queue.push(startNode); 
+function heuristic(node: Node, endNode: Node): number {
+  return Math.abs(node.row - endNode.row) + Math.abs(node.column - endNode.column);
+}
 
-  while (queue.length > 0){
-    let current = queue.shift();
-    if (!current) break
-    let neighbors  = getNeighbors(grid, current);
+function findPath(map: Map<Node, Node>, startNode: Node, endNode: Node): Node[] {
+  const path: Node[] = [];
+  path.push(endNode);
+  let current: Node = endNode;
 
-    if (current.type === "END") {
-      break
+  while (current !== startNode) {
+    const parent = map.get(current);
+    if (!parent) break;
+    path.push(parent);
+    current = parent;
+  }
+
+  return path.reverse();
+}
+
+export function astar(grid: Node[][], startNode: Node, endNode: Node): [Node[], Node[]] {
+  const visitedSet = new Set<Node>();
+  const visited: Node[] = [];
+  const parent = new Map<Node, Node>();
+  const gScore = new Map<Node, number>();
+  const fScore = new Map<Node, number>();
+
+  for (const row of grid) {
+    for (const node of row) {
+      gScore.set(node, Infinity);
+      fScore.set(node, Infinity);
     }
+  }
 
-    for(const n of neighbors){
-      const hasNode = visited.some(newNode => newNode.row === n.row && newNode.column === n.column)
-      if(!hasNode){
-        queue.push(n);
-        visited.push(n); 
+  gScore.set(startNode, 0);
+  fScore.set(startNode, heuristic(startNode, endNode));
+
+  const queue: Node[] = [startNode];
+
+  while (queue.length > 0) {
+    queue.sort((a, b) => fScore.get(a)! - fScore.get(b)!);
+
+    const current = queue.shift();
+    if (!current) break;
+
+    if (visitedSet.has(current)) continue;
+    visitedSet.add(current);
+    visited.push(current);
+
+    if (current === endNode) break;
+
+    for (const n of getNeighbors(grid, current)) {
+      const newG = gScore.get(current)! + 1;
+      if (newG < gScore.get(n)!) {
+        gScore.set(n, newG);
+        fScore.set(n, newG + heuristic(n, endNode));
         parent.set(n, current);
+        queue.push(n);
       }
     }
   }
 
-  path = findPath(parent, startNode, endNode);
-  return [visited, path] 
-}
-
-function findPath( map : Map <Node, Node>, startNode : Node, endNode : Node) : Node[] {
-  const path : Node[] = []
-  let pathFound : boolean = false; 
-  path.push(endNode);
-
-  let current : Node = endNode; 
-  
-  while(!pathFound){
-    let parent = map.get(current);
-    if(!parent) break;
-
-    path.push(parent);
-    if ( parent === startNode){
-      pathFound = true; 
-    }
-    current = parent; 
-    
-  }
-  return path.reverse(); 
+  const path = findPath(parent, startNode, endNode);
+  return [visited, path];
 }
