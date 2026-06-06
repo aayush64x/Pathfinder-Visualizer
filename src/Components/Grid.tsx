@@ -9,22 +9,18 @@ type GridProps = {
 
 function Grid({ grid, onMouseDown, onMouseEnter }: GridProps) {
   return (
-    // The container stacks the rows vertically
-    <div className="flex flex-col">
+    <div
+      className="border border-gray-300 shadow-md overflow-hidden"
+      style={{ lineHeight: 0 }}
+    >
       {grid.map((row, rowIndex) => (
-        // Each row aligns its cells horizontally
         <div key={rowIndex} className="flex">
           {row.map(node => (
             <Cell
               key={`${node.row}-${node.column}`}
               type={node.type}
-              
-              onMouseDown={() => {
-                onMouseDown(node.row, node.column);
-              }}
-              onMouseEnter={() => {
-                onMouseEnter(node.row, node.column);
-              }}
+              onMouseDown={() => onMouseDown(node.row, node.column)}
+              onMouseEnter={() => onMouseEnter(node.row, node.column)}
             />
           ))}
         </div>

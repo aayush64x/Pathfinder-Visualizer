@@ -3,10 +3,10 @@ import { CreateGrid, findNode, HasNode, PlaceNode, RemoveNode, ClearPath } from 
 import type { Algorithm } from "./Types/Cell";
 import { bfs } from "./Algortithm/BFS";
 import { djikstra } from "./Algortithm/Djikstra";
+import { astar } from "./Algortithm/AStar";
 import Grid from "./Components/Grid";
 import Navbar from "./Components/Navbar";
 import { animate } from "./Utils/Animator";
-import { astar } from "./Algortithm/AStar";
 
 function App() {
   const [grid, setGrid] = useState(CreateGrid);
@@ -49,29 +49,23 @@ function App() {
   const handleVisualize = async () => {
     const clearedGrid = ClearPath(grid);
     setGrid(clearedGrid);
-
     const startNode = findNode(clearedGrid, "START");
     const endNode = findNode(clearedGrid, "END");
-
     if (!startNode || !endNode) {
       alert("Please place start and end nodes first");
       return;
     }
-
     setIsRunning(true);
-
     if (algorithm === "BFS") {
       const [visited, path] = bfs(clearedGrid, startNode, endNode);
       await animate(visited, path, setGrid, 10);
     } else if (algorithm === "DIJKSTRA") {
       const [visited, path] = djikstra(clearedGrid, startNode, endNode);
       await animate(visited, path, setGrid, 10);
-    }
-    else if (algorithm === "A-STAR") {
+    } else if (algorithm === "A-STAR") {
       const [visited, path] = astar(clearedGrid, startNode, endNode);
       await animate(visited, path, setGrid, 10);
     }
-
     setIsRunning(false);
   };
 
@@ -90,7 +84,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-gray-100 flex flex-col overflow-hidden">
       <Navbar
         algorithm={algorithm}
         isRunning={isRunning}
@@ -99,7 +93,7 @@ function App() {
         onClearBoard={handleClearBoard}
         onClearWalls={handleClearWalls}
       />
-      <div className="flex flex-col items-center p-6">
+      <div className="flex justify-center items-start p-1">
         <Grid
           grid={grid}
           onMouseDown={handleMouseDown}

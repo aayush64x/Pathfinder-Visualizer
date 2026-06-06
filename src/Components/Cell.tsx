@@ -1,24 +1,33 @@
 import type { NodeType } from '../Types/Cell';
+import { CELL_SIZE } from '../Types/Constants';
 
 export const ColorMap: Record<NodeType, string> = {
   START: "bg-cyan-500",
   END: "bg-red-400",
-  PATH: "bg-green-600",
+  PATH: "bg-yellow-400",
   EMPTY: "bg-white",
-  WALL: "bg-slate-600",
-  VISITED: "bg-blue-100"
+  WALL: "bg-slate-700",
+  VISITED: "bg-blue-300"
 };
 
 type Props = {
   type: NodeType,
-  onMouseDown: () => void, 
+  onMouseDown: () => void,
   onMouseEnter: () => void
 };
 
-function Cell({ type, onMouseDown, onMouseEnter}: Props, ) {
+function Cell({ type, onMouseDown, onMouseEnter }: Props) {
+  const animationClass =
+    type === 'VISITED' ? 'animate-visited' :
+    type === 'PATH' ? 'animate-path' : ''
+
   return (
-    // Clean, single border where the border color perfectly matches the background opacity
-    <div className={`w-10 h-10 rounded border border-gray-500/40 ${ColorMap[type]}`} onMouseDown={() => onMouseDown()} onMouseEnter={() => onMouseEnter()} />
+    <div
+      className={`${ColorMap[type]} ${animationClass} border border-gray-200 cursor-pointer aspect-square`}
+      style={{ width: CELL_SIZE }}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+    />
   );
 }
 
